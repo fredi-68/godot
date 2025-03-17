@@ -56,6 +56,10 @@ protected:
 	static void _bind_methods();
 
 public:
+    // 'mix' is already in use by `AudioEffectCompressor`
+    float fx_mix = 1.0;
+    void set_fx_mix(float p_amount);
+    float get_fx_mix() const;
 	virtual Ref<AudioEffectInstance> instantiate();
 	AudioEffect();
 };

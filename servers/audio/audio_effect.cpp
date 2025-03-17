@@ -48,6 +48,14 @@ void AudioEffectInstance::_bind_methods() {
 
 ////
 
+void AudioEffect::set_fx_mix(float p_amount) {
+    fx_mix = p_amount;
+}
+
+float AudioEffect::get_fx_mix() const {
+    return fx_mix;
+}
+
 Ref<AudioEffectInstance> AudioEffect::instantiate() {
 	Ref<AudioEffectInstance> ret;
 	GDVIRTUAL_CALL(_instantiate, ret);
@@ -55,6 +63,11 @@ Ref<AudioEffectInstance> AudioEffect::instantiate() {
 }
 void AudioEffect::_bind_methods() {
 	GDVIRTUAL_BIND(_instantiate);
+
+    ClassDB::bind_method(D_METHOD("set_fx_mix", "p_amount"), &AudioEffect::set_fx_mix);
+    ClassDB::bind_method(D_METHOD("get_fx_mix"), &AudioEffect::get_fx_mix);
+
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fx_mix", PROPERTY_HINT_RANGE, "0,1,0.1"), "set_fx_mix", "get_fx_mix");
 }
 
 AudioEffect::AudioEffect() {

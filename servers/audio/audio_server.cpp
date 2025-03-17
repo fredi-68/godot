@@ -566,7 +566,7 @@ void AudioServer::_mix_step() {
 		// Process effects.
 		if (!bus->bypass) {
 			for (int j = 0; j < bus->effects.size(); j++) {
-				if (!bus->effects[j].enabled) {
+				if (!bus->effects[j].enabled or bus->effects[j].effect->fx_mix <= 0.0) {
 					continue;
 				}
 
@@ -579,6 +579,18 @@ void AudioServer::_mix_step() {
 						continue;
 					}
 					bus->channels.write[k].effect_instances.write[j]->process(bus->channels[k].buffer.ptr(), temp_buffer.write[k].ptrw(), buffer_size);
+                    if (bus->effects[j].effect->fx_mix < 1.0) {
+                        // Mix the original buffer back in
+                        // TODO: Interpolate to avoid artifacting
+                        for (uint32_t l = 0; l < buffer_size; l++) {
+                            temp_buffer.write[k].write[l].left = 
+                                temp_buffer.write[k][l].left * bus->effects[j].effect->fx_mix + 
+                                bus->channels[k].buffer[l].left * (1.0 - bus->effects[j].effect->fx_mix);
+                            temp_buffer.write[k].write[l].right = 
+                                temp_buffer.write[k][l].right * bus->effects[j].effect->fx_mix + 
+                                bus->channels[k].buffer[l].right * (1.0 - bus->effects[j].effect->fx_mix);
+                        }
+                    }
 				}
 
 				// Swap buffers, so internal buffer always has the right data.
