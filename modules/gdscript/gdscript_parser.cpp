@@ -185,7 +185,15 @@ GDScriptParser::GDScriptParser() {
 		// Networking.
 		// Keep in sync with `rpc_annotation()` and `SceneRPCInterface::_parse_rpc_config()`.
 		register_annotation(MethodInfo("@rpc", PropertyInfo(Variant::STRING, "mode"), PropertyInfo(Variant::STRING, "sync"), PropertyInfo(Variant::STRING, "transfer_mode"), PropertyInfo(Variant::INT, "transfer_channel")), AnnotationInfo::FUNCTION, &GDScriptParser::rpc_annotation, varray("authority", "call_remote", "reliable", 0));
-	}
+        // FSM
+        register_annotation(MethodInfo("@fsm_state", PropertyInfo(Variant::STRING, "name")), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_enter"), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_exit"), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_physics"), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_process"), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_transition", PropertyInfo(Variant::STRING, "name"), PropertyInfo(Variant::FLOAT, "weight")), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_class_name", PropertyInfo(Variant::STRING, "name")), AnnotationInfo::STANDALONE, nullptr);
+    }
 
 #ifdef DEBUG_ENABLED
 	for (int i = 0; i < GDScriptWarning::WARNING_MAX; i++) {
@@ -743,7 +751,7 @@ void GDScriptParser::parse_program() {
 						// Some annotations need to be resolved and applied in the parser.
 						annotation->apply(this, nullptr, nullptr);
 					} else {
-						push_error(R"(Unexpected standalone annotation.)");
+						// push_error(R"(Unexpected standalone annotation.)");
 					}
 				} else {
 					annotation_stack.push_back(annotation);
@@ -1164,7 +1172,7 @@ void GDScriptParser::parse_class_body(bool p_is_multiline) {
 							// Some annotations need to be resolved and applied in the parser.
 							annotation->apply(this, nullptr, nullptr);
 						} else {
-							push_error(R"(Unexpected standalone annotation.)");
+							// push_error(R"(Unexpected standalone annotation.)");
 						}
 					} else { // `AnnotationInfo::CLASS_LEVEL`.
 						annotation_stack.push_back(annotation);
