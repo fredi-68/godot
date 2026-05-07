@@ -2144,7 +2144,8 @@ GDScriptParser::Node *GDScriptParser::parse_statement() {
 						// Some annotations need to be resolved and applied in the parser.
 						annotation->apply(this, nullptr, nullptr);
 					} else {
-						push_error(R"(Unexpected standalone annotation.)");
+                        // patching this out to allow for no-op standalone annotations.
+						// push_error(R"(Unexpected standalone annotation.)");
 					}
 				} else {
 					annotation_stack.push_back(annotation);
