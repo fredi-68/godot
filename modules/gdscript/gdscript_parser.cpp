@@ -185,14 +185,27 @@ GDScriptParser::GDScriptParser() {
 		// Networking.
 		// Keep in sync with `rpc_annotation()` and `SceneRPCInterface::_parse_rpc_config()`.
 		register_annotation(MethodInfo("@rpc", PropertyInfo(Variant::STRING, "mode"), PropertyInfo(Variant::STRING, "sync"), PropertyInfo(Variant::STRING, "transfer_mode"), PropertyInfo(Variant::INT, "transfer_channel")), AnnotationInfo::FUNCTION, &GDScriptParser::rpc_annotation, varray("authority", "call_remote", "reliable", 0));
+        
         // FSM
+        register_annotation(MethodInfo("@fsm_class_name", PropertyInfo(Variant::STRING, "name")), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_include", PropertyInfo(Variant::STRING, "path")), AnnotationInfo::STANDALONE, nullptr);
+
         register_annotation(MethodInfo("@fsm_state", PropertyInfo(Variant::STRING, "name")), AnnotationInfo::STANDALONE, nullptr);
         register_annotation(MethodInfo("@fsm_enter"), AnnotationInfo::STANDALONE, nullptr);
         register_annotation(MethodInfo("@fsm_exit"), AnnotationInfo::STANDALONE, nullptr);
+
         register_annotation(MethodInfo("@fsm_physics"), AnnotationInfo::STANDALONE, nullptr);
         register_annotation(MethodInfo("@fsm_process"), AnnotationInfo::STANDALONE, nullptr);
-        register_annotation(MethodInfo("@fsm_transition", PropertyInfo(Variant::STRING, "name"), PropertyInfo(Variant::FLOAT, "weight")), AnnotationInfo::STANDALONE, nullptr);
-        register_annotation(MethodInfo("@fsm_class_name", PropertyInfo(Variant::STRING, "name")), AnnotationInfo::STANDALONE, nullptr);
+
+        register_annotation(MethodInfo("@fsm_transition", PropertyInfo(Variant::STRING, "name"), PropertyInfo(Variant::FLOAT, "weight"), PropertyInfo(Variant::INT, "priority")), AnnotationInfo::STANDALONE, nullptr, varray(0.0, 0));
+        register_annotation(MethodInfo("@fsm_after", PropertyInfo(Variant::SIGNAL, "signal")), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_trigger", PropertyInfo(Variant::SIGNAL, "signal")), AnnotationInfo::STANDALONE, nullptr);
+
+        register_annotation(MethodInfo("@fsm_preemptable"), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_range", PropertyInfo(Variant::FLOAT, "distance")), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_navlink", PropertyInfo(Variant::NODE_PATH, "target")), AnnotationInfo::STANDALONE, nullptr);
+        register_annotation(MethodInfo("@fsm_movement", PropertyInfo(Variant::FLOAT, "speed_hint")), AnnotationInfo::STANDALONE, nullptr, varray(1.0));
+        register_annotation(MethodInfo("@fsm_attack", PropertyInfo(Variant::FLOAT, "damage_hint")), AnnotationInfo::STANDALONE, nullptr, varray(1.0));
     }
 
 #ifdef DEBUG_ENABLED
